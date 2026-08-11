@@ -1,0 +1,29 @@
+FROM node:22-alpine AS base
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json turbo.json ./
+COPY services/api/package.json ./services/api/
+COPY packages/shared/package.json ./packages/shared/
+RUN npm ci --workspace=@geoalerta/api --workspace=@geoalerta/shared
+
+# Copy source
+COPY packages/shared/ ./packages/shared/
+COPY services/api/ ./services/api/
+COPY tsconfig.base.json ./
+
+# Build
+RUN npm run build --workspace=@geoalerta/api
+
+# Production image
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/services/api/dist ./dist
+COPY --from=base /app/services/api/package.json ./
+
+EXPOSE 3001 3002
+
+CMD ["node", "dist/server.js"]

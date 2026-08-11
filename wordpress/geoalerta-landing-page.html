@@ -1,0 +1,236 @@
+<!-- 
+  GeoAlerta Global - Página de entrada para WordPress
+  
+  INSTRUCCIONES:
+  1. En tu WordPress (nesalms.local), ve a Pages → Add New
+  2. Título: "GeoAlerta Global"
+  3. Cambia a editor de código (HTML) o usa un bloque "HTML personalizado"
+  4. Pega todo el contenido de abajo
+  5. Publica la página
+  
+  PARA PRODUCCIÓN: Cambia http://192.168.31.180:3000 por https://alerta.fundivel.org
+-->
+
+<style>
+  .geoalerta-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .geoalerta-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #1E40AF, #06B6D4);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 10px 40px rgba(30, 64, 175, 0.3);
+  }
+  .geoalerta-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .geoalerta-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 32px;
+  }
+  .geoalerta-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+    text-align: left;
+  }
+  @media (max-width: 480px) {
+    .geoalerta-features {
+      grid-template-columns: 1fr;
+    }
+  }
+  .geoalerta-feature {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .geoalerta-feature-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .geoalerta-feature-text h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 4px;
+  }
+  .geoalerta-feature-text p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .geoalerta-cta {
+    display: inline-block;
+    background: linear-gradient(135deg, #1E40AF, #0891B2);
+    color: white !important;
+    padding: 18px 48px;
+    border-radius: 14px;
+    text-decoration: none !important;
+    font-weight: 700;
+    font-size: 18px;
+    box-shadow: 0 8px 30px rgba(30, 64, 175, 0.35);
+    transition: all 0.2s;
+  }
+  .geoalerta-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(30, 64, 175, 0.45);
+    color: white !important;
+  }
+  .geoalerta-note {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #94a3b8;
+  }
+  .geoalerta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ecfdf5;
+    color: #059669;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+  .geoalerta-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .geoalerta-steps {
+    background: #f1f5f9;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 32px 0;
+    text-align: left;
+  }
+  .geoalerta-steps h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: #1e293b;
+  }
+  .geoalerta-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .geoalerta-step:last-child {
+    margin-bottom: 0;
+  }
+  .geoalerta-step-num {
+    width: 24px;
+    height: 24px;
+    background: #1E40AF;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .geoalerta-step-text {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.5;
+  }
+</style>
+
+<div class="geoalerta-wrapper">
+  
+  <div class="geoalerta-logo">🌐</div>
+  
+  <h2 class="geoalerta-title">GeoAlerta Global</h2>
+  <p class="geoalerta-subtitle">Sistema de Alerta Temprana Sísmica y Resiliencia de Personal</p>
+  
+  <div class="geoalerta-badge">Sistema operativo — Protección activa</div>
+
+  <div class="geoalerta-features">
+    <div class="geoalerta-feature">
+      <span class="geoalerta-feature-icon">⚡</span>
+      <div class="geoalerta-feature-text">
+        <h4>Alerta en < 500ms</h4>
+        <p>Detección de ondas P antes del sismo destructivo</p>
+      </div>
+    </div>
+    <div class="geoalerta-feature">
+      <span class="geoalerta-feature-icon">📍</span>
+      <div class="geoalerta-feature-text">
+        <h4>Rastreo GPS</h4>
+        <p>Ubicación en tiempo real de todo el personal</p>
+      </div>
+    </div>
+    <div class="geoalerta-feature">
+      <span class="geoalerta-feature-icon">🆘</span>
+      <div class="geoalerta-feature-text">
+        <h4>SOS y Modo Baliza</h4>
+        <p>Señales de rescate automáticas bajo escombros</p>
+      </div>
+    </div>
+    <div class="geoalerta-feature">
+      <span class="geoalerta-feature-icon">🕸️</span>
+      <div class="geoalerta-feature-text">
+        <h4>Red Mesh P2P</h4>
+        <p>Comunicación sin internet entre dispositivos</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="http://192.168.31.180:3000" target="_blank" rel="noopener" class="geoalerta-cta">
+    🌐 Acceder a GeoAlerta
+  </a>
+  
+  <p class="geoalerta-note">Se abrirá la plataforma en una nueva ventana. Instálala en tu celular para protección 24/7.</p>
+
+  <div class="geoalerta-steps">
+    <h3>📱 ¿Cómo instalar en tu celular?</h3>
+    <div class="geoalerta-step">
+      <span class="geoalerta-step-num">1</span>
+      <span class="geoalerta-step-text">Haz clic en "Acceder a GeoAlerta" desde tu celular</span>
+    </div>
+    <div class="geoalerta-step">
+      <span class="geoalerta-step-num">2</span>
+      <span class="geoalerta-step-text">Regístrate con tu correo, nombre y apellidos</span>
+    </div>
+    <div class="geoalerta-step">
+      <span class="geoalerta-step-num">3</span>
+      <span class="geoalerta-step-text">Acepta los permisos de ubicación y notificaciones</span>
+    </div>
+    <div class="geoalerta-step">
+      <span class="geoalerta-step-num">4</span>
+      <span class="geoalerta-step-text"><strong>Android:</strong> Toca ⋮ → "Instalar app" · <strong>iPhone:</strong> Toca □↑ → "Añadir a inicio"</span>
+    </div>
+  </div>
+
+</div>
