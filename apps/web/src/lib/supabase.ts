@@ -14,6 +14,11 @@ export function getSupabase(): SupabaseClient {
     );
   }
 
-  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+  supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
   return supabaseInstance;
 }

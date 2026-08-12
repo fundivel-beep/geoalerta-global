@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,25 +14,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabase();
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://geoalerta.fundivel.org'}/reset-password`,
-    });
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://geoalerta.fundivel.org';
 
-    if (error) {
+    if (!supabaseUrl || !supabaseKey) {
       return NextResponse.json(
-        { error: 'Error al enviar el correo de recuperación' },
+        { error: 'Configuración del servidor incompleta' },
         { status: 500 }
       );
     }
 
-    // Always return success to prevent email enumeration
+    const res = await fetch(`${supabaseUrl}/auth/v1/recover`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        email,
+        redirect_to: `${appUrl}/reset-password`,
+      }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      return NextResponse.json(
+        { error: data.error_description || data.msg || 'Error al enviar el correo' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       message: 'Si el correo existe, recibirás un enlace de recuperación.',
     });
-  } catch {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: `Error del servidor: ${message}` },
       { status: 500 }
     );
   }
