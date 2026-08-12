@@ -2,7 +2,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCp6lCe8Ofje2mbk4FrRgHRgpLXl12jfTU",
+  apiKey: "AIzaSyCp6UCe8Otje2mbkAEzBgHBgpLXIl2jf1U",
   authDomain: "geoalerta-fundivel.firebaseapp.com",
   projectId: "geoalerta-fundivel",
   storageBucket: "geoalerta-fundivel.firebasestorage.app",
