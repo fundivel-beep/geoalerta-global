@@ -3,10 +3,10 @@
 import { useState } from 'react';
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '', totp_code: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [requires2FA, setRequires2FA] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +22,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (data.requires_2fa) setRequires2FA(true);
-        else setError(data.error || 'Error al iniciar sesión');
+        setError(data.error || 'Error al iniciar sesión');
       } else {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
@@ -73,30 +72,40 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-xs text-gray-400 mb-1.5 font-medium">Contraseña</label>
-            <input
-              type="password"
-              required
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm"
-            />
-          </div>
-
-          {requires2FA && (
-            <div className="animate-shake">
-              <label className="block text-xs text-gray-400 mb-1.5 font-medium">Código 2FA</label>
+            <div className="relative">
               <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
+                type={showPassword ? 'text' : 'password'}
                 required
-                value={form.totp_code}
-                onChange={(e) => setForm({ ...form, totp_code: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-center text-xl tracking-[0.5em] font-mono placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition"
-                placeholder="000000"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm"
+                placeholder="Tu contraseña"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition p-1"
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              >
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                )}
+              </button>
             </div>
-          )}
+            <div className="flex justify-end mt-1.5">
+              <a href="/recuperar" className="text-[11px] text-blue-400 hover:text-blue-300 transition">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+          </div>
         </div>
 
         <button

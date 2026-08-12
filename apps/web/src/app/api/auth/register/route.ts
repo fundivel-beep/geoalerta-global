@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSupabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,11 +22,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production, save to database and send verification email
-    // For now, return success to demo the flow
+    const supabase = getSupabase();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          nombre: `${nombre} ${apellidos}`,
+          nombre_corto: nombre,
+          apellidos,
+        },
+      },
+    });
+
+    if (error) {
+      if (error.message.includes('already registered')) {
+        return NextResponse.json(
+          { error: 'Este correo ya está registrado' },
+          { status: 409 }
+        );
+      }
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json({
       message: 'Registro exitoso. Verifica tu correo electrónico.',
-      user: { email, nombre: `${nombre} ${apellidos}` },
+      user: { email: data.user?.email, nombre: `${nombre} ${apellidos}` },
     });
   } catch {
     return NextResponse.json(

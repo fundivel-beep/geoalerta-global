@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-const PUBLIC_ROUTES = ['/login', '/registro'];
+const PUBLIC_ROUTES = ['/login', '/registro', '/recuperar', '/reset-password'];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

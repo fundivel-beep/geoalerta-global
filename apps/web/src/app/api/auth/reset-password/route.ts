@@ -6,36 +6,30 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email } = body;
 
-    if (!email || !password) {
+    if (!email) {
       return NextResponse.json(
-        { error: 'Email y contraseña son requeridos' },
+        { error: 'El correo electrónico es requerido' },
         { status: 400 }
       );
     }
 
     const supabase = getSupabase();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://geoalerta.fundivel.org'}/reset-password`,
     });
 
     if (error) {
       return NextResponse.json(
-        { error: 'Credenciales incorrectas' },
-        { status: 401 }
+        { error: 'Error al enviar el correo de recuperación' },
+        { status: 500 }
       );
     }
 
+    // Always return success to prevent email enumeration
     return NextResponse.json({
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      user: {
-        id: data.user.id,
-        email: data.user.email,
-        nombre: data.user.user_metadata?.nombre || data.user.email,
-      },
+      message: 'Si el correo existe, recibirás un enlace de recuperación.',
     });
   } catch {
     return NextResponse.json(
