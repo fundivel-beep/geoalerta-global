@@ -46,6 +46,7 @@ export default function RegistroPage() {
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error de conexión';
+      console.error('[GeoAlerta] Registration error:', err);
       setError(message);
     } finally {
       setLoading(false);

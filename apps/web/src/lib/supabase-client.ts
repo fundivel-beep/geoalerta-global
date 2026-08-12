@@ -9,9 +9,28 @@ export function getSupabaseClient(): SupabaseClient {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    throw new Error('Supabase no configurado. Verifica las variables de entorno.');
+    // In development/build, env vars might not be available
+    // Log for debugging in browser console
+    if (typeof window !== 'undefined') {
+      console.error('[GeoAlerta] Supabase env vars missing:', { url: !!url, key: !!key });
+    }
+    throw new Error('Sistema no configurado. Contacte al administrador.');
   }
 
-  instance = createClient(url, key);
+  instance = createClient(url, key, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+    },
+  });
   return instance;
+}
+
+// Expose for debugging in browser console
+if (typeof window !== 'undefined') {
+  (window as unknown as Record<string, unknown>).__SUPABASE_DEBUG__ = {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET',
+    key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
+  };
 }
