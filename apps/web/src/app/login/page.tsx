@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,23 +15,27 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: form.email,
+        password: form.password,
       });
-      const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || 'Error al iniciar sesión');
+      if (error) {
+        setError('Credenciales incorrectas');
       } else {
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('access_token', data.session.access_token);
+        localStorage.setItem('refresh_token', data.session.refresh_token);
+        localStorage.setItem('user', JSON.stringify({
+          id: data.user.id,
+          email: data.user.email,
+          nombre: data.user.user_metadata?.nombre || data.user.email,
+        }));
         window.location.href = '/';
       }
-    } catch {
-      setError('Error de conexión. Intenta de nuevo.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error de conexión';
+      setError(message);
     } finally {
       setLoading(false);
     }

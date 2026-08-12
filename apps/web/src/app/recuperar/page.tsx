@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 export default function RecuperarPage() {
   const [email, setEmail] = useState('');
@@ -14,20 +15,19 @@ export default function RecuperarPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
-      const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || 'Error al enviar el correo');
+      if (error) {
+        setError(error.message);
       } else {
         setSent(true);
       }
-    } catch {
-      setError('Error de conexión. Intenta de nuevo.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error de conexión';
+      setError(message);
     } finally {
       setLoading(false);
     }

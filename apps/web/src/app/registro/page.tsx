@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 export default function RegistroPage() {
   const [form, setForm] = useState({ email: '', nombre: '', apellidos: '', password: '' });
@@ -14,17 +15,38 @@ export default function RegistroPage() {
     setError('');
     setLoading(true);
 
+    if (form.password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            nombre: `${form.nombre} ${form.apellidos}`,
+            nombre_corto: form.nombre,
+            apellidos: form.apellidos,
+          },
+        },
       });
-      const data = await res.json();
-      if (!res.ok) setError(data.error || 'Error en el registro');
-      else setSuccess(true);
-    } catch {
-      setError('Error de conexión. Intenta de nuevo.');
+
+      if (error) {
+        if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+          setError('Este correo ya está registrado');
+        } else {
+          setError(error.message);
+        }
+      } else {
+        setSuccess(true);
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error de conexión';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -34,7 +56,7 @@ export default function RegistroPage() {
     return (
       <main className="flex items-center justify-center min-h-[100dvh] p-4">
         <div className="glass-strong rounded-3xl p-8 max-w-sm w-full text-center">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-3xl mb-4 animate-float">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-3xl mb-4">
             📧
           </div>
           <h2 className="text-xl font-bold mb-2">Revisa tu correo</h2>
