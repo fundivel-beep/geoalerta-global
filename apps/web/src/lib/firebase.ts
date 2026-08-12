@@ -1,0 +1,15 @@
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCp6lCe8Ofje2mbk4FrRgHRgpLXl12jfTU",
+  authDomain: "geoalerta-fundivel.firebaseapp.com",
+  projectId: "geoalerta-fundivel",
+  storageBucket: "geoalerta-fundivel.firebasestorage.app",
+  messagingSenderId: "975389486216",
+  appId: "1:975389486216:web:9cd8bf33b0b19582e5833d",
+};
+
+// Initialize Firebase only once
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+export const auth = getAuth(app);
