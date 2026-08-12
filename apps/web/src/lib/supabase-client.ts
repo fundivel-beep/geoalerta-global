@@ -1,23 +1,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+// Hardcoded for reliability — these are public keys safe to expose in client code
+const SUPABASE_URL = 'https://xqdiphjkfnrssdpzyxqa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxZHBoaWprZm5yc3NkcHp5eHFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0OTc4MDgsImV4cCI6MjEwMjA3MzgwOH0.WLwst4HzF2fuSge1VopBcUP70mvyKO3piGei3vYKHS4';
+
 let instance: SupabaseClient | null = null;
 
 export function getSupabaseClient(): SupabaseClient {
   if (instance) return instance;
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    // In development/build, env vars might not be available
-    // Log for debugging in browser console
-    if (typeof window !== 'undefined') {
-      console.error('[GeoAlerta] Supabase env vars missing:', { url: !!url, key: !!key });
-    }
-    throw new Error('Sistema no configurado. Contacte al administrador.');
-  }
-
-  instance = createClient(url, key, {
+  instance = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
@@ -25,12 +17,4 @@ export function getSupabaseClient(): SupabaseClient {
     },
   });
   return instance;
-}
-
-// Expose for debugging in browser console
-if (typeof window !== 'undefined') {
-  (window as unknown as Record<string, unknown>).__SUPABASE_DEBUG__ = {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET',
-    key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET',
-  };
 }
