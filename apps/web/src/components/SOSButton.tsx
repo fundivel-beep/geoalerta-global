@@ -72,7 +72,7 @@ export function SOSButton() {
   }
 
   return (
-    <div className="fixed bottom-6 left-0 right-0 z-50 flex flex-col items-center safe-bottom">
+    <div className="fixed bottom-28 left-0 right-0 z-50 flex flex-col items-center pointer-events-none safe-bottom">
       {/* SOS Ring animation when pressed */}
       {isPressed && (
         <div className="absolute bottom-3 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-red-500/20 animate-pulse-ring" />
@@ -106,7 +106,7 @@ export function SOSButton() {
           onTouchEnd={handlePressEnd}
           className={`
             relative w-[88px] h-[88px] sm:w-[104px] sm:h-[104px] rounded-full
-            flex items-center justify-center select-none
+            flex items-center justify-center select-none pointer-events-auto
             transition-all duration-200
             ${isPressed
               ? 'bg-red-600 scale-110 shadow-2xl shadow-red-600/50'

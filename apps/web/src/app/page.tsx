@@ -19,7 +19,7 @@ export default function HomePage() {
       <ConnectivityBadge />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col flex-1 px-4 pt-16 pb-32 safe-top safe-bottom max-w-lg mx-auto w-full">
+      <div className="relative z-10 flex flex-col flex-1 px-4 pt-16 pb-8 safe-top safe-bottom max-w-lg mx-auto w-full">
         <HeroHeader />
 
         {/* Status cards */}
@@ -52,6 +52,9 @@ export default function HomePage() {
 
         {/* Quick actions */}
         <QuickActions />
+
+        {/* Spacer for SOS button */}
+        <div className="h-36" />
       </div>
 
       <SOSButton />
