@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 
 export default function RegistroPage() {
   const [form, setForm] = useState({ email: '', nombre: '', apellidos: '', password: '' });
@@ -23,10 +24,34 @@ export default function RegistroPage() {
     }
 
     try {
+      // 1. Crear cuenta en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-      await updateProfile(userCredential.user, {
+      const user = userCredential.user;
+
+      // 2. Actualizar nombre en Auth
+      await updateProfile(user, {
         displayName: `${form.nombre} ${form.apellidos}`,
       });
+
+      // 3. Crear perfil en Firestore (colección "personal", doc ID = UID del usuario)
+      await setDoc(doc(db, 'personal', user.uid), {
+        uid: user.uid,
+        nombre: `${form.nombre} ${form.apellidos}`,
+        nombre_corto: form.nombre,
+        apellidos: form.apellidos,
+        email: form.email,
+        cargo: '',
+        zona: '',
+        telefono: '',
+        estado: 'sin_senal',
+        bat: null,
+        lat: null,
+        lng: null,
+        ultimoContacto: 'Recién registrado',
+        creadoEn: serverTimestamp(),
+        activo: true,
+      });
+
       setSuccess(true);
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'code' in err) {
@@ -57,7 +82,7 @@ export default function RegistroPage() {
           </div>
           <h2 className="text-xl font-bold mb-2">Cuenta creada</h2>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Tu cuenta ha sido creada exitosamente. Ya puedes iniciar sesión.
+            Tu cuenta ha sido creada exitosamente. Ya puedes iniciar sesión y usar GeoAlerta.
           </p>
           <a href="/login" className="inline-block mt-6 px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition">
             Ir a Login
@@ -122,7 +147,7 @@ export default function RegistroPage() {
 
         <button type="submit" disabled={loading}
           className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/25 active:scale-[0.98]">
-          {loading ? 'Registrando...' : 'Crear Cuenta'}
+          {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
         </button>
 
         <p className="text-center text-sm text-gray-500">
