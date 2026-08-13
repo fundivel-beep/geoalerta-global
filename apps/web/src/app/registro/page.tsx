@@ -6,7 +6,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
 export default function RegistroPage() {
-  const [form, setForm] = useState({ email: '', nombre: '', apellidos: '', password: '' });
+  const [form, setForm] = useState({ email: '', nombre: '', apellidos: '', password: '', telefono: '', zona: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,25 +24,22 @@ export default function RegistroPage() {
     }
 
     try {
-      // 1. Crear cuenta en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
 
-      // 2. Actualizar nombre en Auth
       await updateProfile(user, {
         displayName: `${form.nombre} ${form.apellidos}`,
       });
 
-      // 3. Crear perfil en Firestore (colección "personal", doc ID = UID del usuario)
       await setDoc(doc(db, 'personal', user.uid), {
         uid: user.uid,
         nombre: `${form.nombre} ${form.apellidos}`,
         nombre_corto: form.nombre,
         apellidos: form.apellidos,
         email: form.email,
+        telefono: form.telefono,
+        zona: form.zona,
         cargo: '',
-        zona: '',
-        telefono: '',
         estado: 'sin_senal',
         bat: null,
         lat: null,
@@ -97,7 +94,7 @@ export default function RegistroPage() {
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-600/15 rounded-full blur-[100px]" />
       <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px]" />
 
-      <form onSubmit={handleSubmit} className="relative glass-strong rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5">
+      <form onSubmit={handleSubmit} className="relative glass-strong rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-4">
         <div className="text-center">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-2xl mb-3">🌐</div>
           <h1 className="text-xl sm:text-2xl font-bold">Crear Cuenta</h1>
@@ -110,13 +107,16 @@ export default function RegistroPage() {
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-3">
+          {/* Email */}
           <div>
             <label className="block text-xs text-gray-400 mb-1.5 font-medium">Correo electrónico</label>
             <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm"
               placeholder="tu@email.com" />
           </div>
+
+          {/* Nombre + Apellidos */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-gray-400 mb-1.5 font-medium">Nombre</label>
@@ -129,6 +129,24 @@ export default function RegistroPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm" />
             </div>
           </div>
+
+          {/* Teléfono */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-1.5 font-medium">Teléfono</label>
+            <input type="tel" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm"
+              placeholder="+51 987 654 321" />
+          </div>
+
+          {/* Zona */}
+          <div>
+            <label className="block text-xs text-gray-400 mb-1.5 font-medium">Zona / Distrito</label>
+            <input type="text" value={form.zona} onChange={(e) => setForm({ ...form, zona: e.target.value })}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-sm"
+              placeholder="Ej: Lima Centro, Miraflores..." />
+          </div>
+
+          {/* Contraseña */}
           <div>
             <label className="block text-xs text-gray-400 mb-1.5 font-medium">Contraseña</label>
             <div className="relative">
