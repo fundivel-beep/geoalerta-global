@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -19,6 +20,30 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
       const token = await user.getIdToken();
+
+      // Check if Firestore profile exists — create it if not (for users registered before this update)
+      const profileRef = doc(db, 'personal', user.uid);
+      const profileSnap = await getDoc(profileRef);
+      if (!profileSnap.exists()) {
+        const nombre = user.displayName || user.email?.split('@')[0] || 'Usuario';
+        await setDoc(profileRef, {
+          uid: user.uid,
+          nombre,
+          nombre_corto: nombre.split(' ')[0],
+          apellidos: nombre.split(' ').slice(1).join(' '),
+          email: user.email,
+          cargo: '',
+          zona: '',
+          telefono: '',
+          estado: 'sin_senal',
+          bat: null,
+          lat: null,
+          lng: null,
+          ultimoContacto: 'Recién sincronizado',
+          creadoEn: serverTimestamp(),
+          activo: true,
+        });
+      }
 
       localStorage.setItem('access_token', token);
       localStorage.setItem('user', JSON.stringify({
